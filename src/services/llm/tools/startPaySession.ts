@@ -1,5 +1,6 @@
 import { config } from "../../../config";
 import { Twilio } from "twilio";
+import {CAPTURE_PAYMENT_CARD_NUMBER} from "./toolConstants"
 
 const twilioClient = new Twilio(config.twilio.accountSid, config.twilio.authToken);
 
@@ -19,6 +20,7 @@ export async function startPaySession(params: startPaySessionParams): Promise<st
     currency: "USD",
     chargeAmount: 1,
     paymentConnector: "stripe_connector",
+    //timeout:60,
     securityCode: true,
     postalCode: false
   }
@@ -37,7 +39,7 @@ export async function startPaySession(params: startPaySessionParams): Promise<st
   
     console.log("Payment session created", paymentSession);
     // Return the Payment session Sid for this Call Sid
-    return `Payment session started with Pay Sid: ${paymentSession.sid} , next call the capture_payment_card_number use Pay Sid: ${paymentSession.sid} tool to capture the card number`;
+    return `Payment session started with Pay Sid: ${paymentSession.sid} , next call the ${CAPTURE_PAYMENT_CARD_NUMBER} use Pay Sid: ${paymentSession.sid} tool to capture the card number`;
   } catch (error) {
     // const message = `Error with StartCapture for callSID: ${callSid} - ${error} `;
     // this.emit(LOG_EVENT, { level: 'error', message });

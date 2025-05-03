@@ -1,5 +1,7 @@
 import { config } from "../../../config";
 import { Twilio } from "twilio";
+import { getSession} from "../../sessionState";
+import {CAPTURE_PAYMENT_CARD_NUMBER} from "./toolConstants"
 
 const twilioClient = new Twilio(config.twilio.accountSid, config.twilio.authToken);
 
@@ -10,7 +12,9 @@ export interface captureExpirationDateParams {
 
 export async function captureExpirationDate(params: captureExpirationDateParams): Promise<string | null> {
 
-  console.log("Capture expiration date", params);
+
+
+ 
 
   // const sessionData = {
   //   idempotencyKey: params.callSid + Date.now().toString(),
@@ -24,6 +28,19 @@ export async function captureExpirationDate(params: captureExpirationDateParams)
   // }
   
  try {
+    console.log("Capture expiration date", params);
+
+    const sessionData = await getSession(params.callSid);
+  
+    if (!sessionData) {
+      console.error("Session data not found for callSid:", params.callSid);
+      return null;
+    }
+  
+    if(!sessionData.data.creditCardCaptureComplete) {
+      return `The previous step, credit card number capture, was not completed. Please restart that step by calling the ${CAPTURE_PAYMENT_CARD_NUMBER} tool.`; 
+    }
+    
     const paymentSession = await twilioClient
         .calls(params.callSid)
         .payments(params.paymentSid)

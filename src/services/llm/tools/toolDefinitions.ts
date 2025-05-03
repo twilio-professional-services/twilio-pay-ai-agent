@@ -1,3 +1,14 @@
+import {
+  VERIFY_USER,
+  CHECK_PENDING_BILL,
+  START_PAYMENT,
+  CAPTURE_PAYMENT_CARD_NUMBER,
+  CAPTURE_SECURITY_CODE,
+  CAPTURE_EXPIRATION_DATE,
+  COMPLETE_PAYMENT_PROCESSING,
+  HUMAN_AGENT_HANDOFF,
+  CANCEL_PAYMENT_PROCESSING,
+} from "./toolConstants";
 
 export interface LLMToolDefinition {
   type: 'function';
@@ -12,46 +23,12 @@ export interface LLMToolDefinition {
   };
 }
 
-// OpenAI Function Calling https://platform.openai.com/docs/guides/function-calling
 export const toolDefinitions : LLMToolDefinition[] = [
-    // {
-    //   type: 'function',
-    //   function: {
-    //     name: 'get_current_weather',
-    //     description: 'Get the current weather for a specific location',
-    //     parameters: {
-    //       type: 'object',
-    //       properties: {
-    //         location: {
-    //           type: 'string',
-    //           description: 'The city and state, e.g. San Francisco, CA',
-    //         },
-    //       },
-    //       required: ['location'],
-    //     },
-    //   },
-    // },
-    //  {
-    //   type: 'function',
-    //   function: {
-    //     name: 'switch_language',
-    //     description: 'Switch the language of the conversation',
-    //     parameters: {
-    //       type: 'object',
-    //       properties: {
-    //         targetLanguage: {
-    //           type: 'string',
-    //           description: 'The target language to switch to. SHOULD BE ONE OF THE FOLLOWING: ["english","spanish"]',
-    //         },
-    //       },
-    //       required: ['targetLanguage'],
-    //     },
-    //   },
-    // },
+  
     {
       type: 'function',
       function: {
-        name: 'verify_user',
+        name: VERIFY_USER,
         description: 'Verify the identity of a user',
         parameters: {
           type: 'object',
@@ -76,14 +53,14 @@ export const toolDefinitions : LLMToolDefinition[] = [
     {
       type: 'function',
       function: {
-        name: 'check_pending_bill',
+        name: CHECK_PENDING_BILL,
         description: 'Get the current balance due for a verified user',
         parameters: {
           type: 'object',
           properties: {
             userId: {
               type: 'string',
-              description: 'The user ID. Note: This is verified user id from the verify_user function',
+              description: `The user ID. Note: This is verified user id from the ${VERIFY_USER} function`,
             },
           },
           required: ['userId'],
@@ -93,7 +70,7 @@ export const toolDefinitions : LLMToolDefinition[] = [
     {
       type: 'function',
       function: {
-        name: 'start_payment',
+        name: START_PAYMENT,
         description: 'Initiate the payment process for the specified amount',
         parameters: {
           type: 'object',
@@ -114,7 +91,7 @@ export const toolDefinitions : LLMToolDefinition[] = [
     {
       type: 'function',
       function: {
-        name: 'capture_payment_card_number',
+        name: CAPTURE_PAYMENT_CARD_NUMBER,
         description: 'Capture the payment card number from the user',
         parameters: {
           type: 'object',
@@ -135,7 +112,7 @@ export const toolDefinitions : LLMToolDefinition[] = [
     {
       type: 'function',
       function: {
-        name: 'capture_security_code',
+        name: CAPTURE_SECURITY_CODE,
         description: 'Capture the security code from the user',
   
         parameters: {
@@ -157,7 +134,7 @@ export const toolDefinitions : LLMToolDefinition[] = [
     {
       type: 'function',
       function: {
-        name: 'capture_expiration_date',
+        name: CAPTURE_EXPIRATION_DATE,
         description: 'Capture the expiration date from the user',
   
         parameters: {
@@ -179,7 +156,7 @@ export const toolDefinitions : LLMToolDefinition[] = [
     {
       type: 'function',
       function: {
-        name: 'complete_payment_processing',
+        name: COMPLETE_PAYMENT_PROCESSING,
         description: 'Complete the payment processing for the session',
   
         parameters: {
@@ -198,70 +175,31 @@ export const toolDefinitions : LLMToolDefinition[] = [
         },
       },
     },
-
-    // {
-    //   type: 'function',
-    //   function: {
-    //     name: 'search_common_medical_terms',
-    //     description: 'Check knowledge base for medical terms',
-    //     parameters: {
-    //       type: 'object',
-    //       properties: {
-    //         inquiry: {
-    //           type: 'string',
-    //           description: 'The term to search for SHOULD BE ONE OF THE FOLLOWING: ["DEDUCTIBLE","COPAY","HSA","OUT_OF_POCKET_MAX"]',
-    //         },
-    //       },
-    //       required: ['inquiry'],
-    //     },
-    //   },
-    // },
-    // {
-    //   type: 'function',
-    //   function: {
-    //     name: 'check_hsa_account',
-    //     description: 'Check the balance of a user\'s Health Savings Account (HSA)',
-    //     parameters: {
-    //       type: 'object',
-    //       properties: {
-    //         userId: {
-    //           type: 'string',
-    //           description: 'The user ID. Note: This is verified user id from the verify_user_identity function',
-    //         },
-    //       },
-    //       required: ['userId'],
-    //     },
-    //   },
-    // },
-    // {
-    //   type: 'function',
-    //   function: {
-    //     name: 'check_payment_options',
-    //     description: 'Check the payment options available to the user',
-    //     parameters: {
-    //       type: 'object',
-    //       properties: {
-    //         userId: {
-    //           type: 'string',
-    //           description: 'The user ID. Note: This is verified user id from the verify_user_identity function',
-    //         },
-    //         hsaAccountBalance: {
-    //           type: 'number',
-    //           description: 'The balance of the user\'s Health Savings Account (HSA). Note: This is verified by the check_hsa_account function',
-    //         },
-    //         balance: {
-    //           type: 'number',
-    //           description: 'The total amount of the balance on a pending medical bill. Note: This is verified by the check_pending_bill function',
-    //         },
-    //       },
-    //       required: ['userId', 'hsaAccountBalance', 'balance'],
-    //     },
-    //   },
-    // },
     {
       type: 'function',
       function: {
-        name: 'human_agent_handoff',
+        name: CANCEL_PAYMENT_PROCESSING,
+        description: 'Cancel the payment processing for the session',
+        parameters: {
+          type: 'object',
+          properties: {
+            callSid: {
+              type: 'string',
+              description: 'The call SID for the session.',
+            },
+            paymentSid: {
+              type: 'string',
+              description: 'The payment SID for the session.',
+            },
+          },
+          required: ['callSid', 'paymentSid'],
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: HUMAN_AGENT_HANDOFF,
         description: 'Transfers the customer to a live agent in case they request help from a real person.',
         parameters: {
           type: "object",

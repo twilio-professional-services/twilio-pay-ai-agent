@@ -21,9 +21,8 @@ import {
   capturePaymentCardNumber,
   captureSecurityCode,
   captureExpirationDate,
-  completePaymentProcessing,
+  completePaymentSession,
 } from "./tools";
-
 
 export class LLMService extends EventEmitter {
   private openai: OpenAI;
@@ -235,12 +234,12 @@ export class LLMService extends EventEmitter {
   }
 
   async setup(message: any) {
-   // Handle setup message
+    // Handle setup message
 
-   this.messages.push({
-     role: "system",
-     content: `Please note - CallSid: ${message.callSid} for the session. You will need this to start the pay session`,
-   });
+    this.messages.push({
+      role: "system",
+      content: `Please note - CallSid: ${message.callSid} for the session. You will need this to start the pay session`,
+    });
   }
 
   async executeToolCall(
@@ -264,7 +263,7 @@ export class LLMService extends EventEmitter {
         capture_payment_card_number: capturePaymentCardNumber,
         capture_security_code: captureSecurityCode,
         capture_expiration_date: captureExpirationDate,
-        complete_payment_processing: completePaymentProcessing,
+        complete_payment_processing: completePaymentSession,
       }[name];
 
       if (!toolFunction) {

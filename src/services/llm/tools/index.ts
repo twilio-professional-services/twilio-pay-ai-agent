@@ -1,8 +1,6 @@
 export * from './toolDefinitions';
-export * from './getCurrentWeather';
 export * from './verifyUserIdentity';
 export * from './checkPendingBill';
-export * from './searchCommonMedicalTerms';
 export * from './humanAgentHandoff';
 export * from './checkHsaAccount';
 export * from './checkPaymentOptions';
@@ -11,4 +9,4 @@ export * from './startPaySession';
 export * from './capturePaymentCardNumber';
 export * from './captureSecurityCode';
 export * from './captureExpirationDate';
-export * from './completePaymentProcessing'
+export * from './completePaymentSession'

@@ -21,13 +21,13 @@ export const languageOptions: { [key: string]: LanguageOption } = {
     ttsProvider: "Elevenlabs", // "google",
     voice: "g6xIsTj2HwM6VR4iXFCw", // "en-US-Journey-O",
     transcriptionProvider: "deepgram", // "google",
-    speechModel: "nova-2-general", // "telephony",
+    speechModel: "nova-3-medical", // "telephony",
   },
 };
 
 // Elevenlabs voices
 // Dakota H - P7x743VjyZEOihNNygQ9
-// Evie, 
+// Evie,
 // Jessica Anne - flHkNRp1BlvT73UL6gyz
 // Aunt Annie
 // Dr. Renetta.

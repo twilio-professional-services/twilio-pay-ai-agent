@@ -34,7 +34,7 @@ const mockData = {
       userId: "user123",
       visit: {
         date: "2024-10-01",
-        hospital: "XYZ Hospital",
+        hospital: "GHI Hospital",
       },
       bill: {
         copay: 150,
@@ -89,17 +89,6 @@ const mockData = {
     },
   ],
 
-
-
-  common_terms: {
-    deductible:
-      "Deductibles are the amount of money you have to pay for covered health care services before your insurance plan starts to pay. After you pay your deductible, you usually pay only a copayment or coinsurance for covered services. Your insurance company pays the rest.",
-    copay:
-      "A copayment or copay is a fixed amount for a covered service, paid by a patient to the provider of service before receiving the service. It may be defined in an insurance policy and paid by an insured person each time a medical service is accessed.",
-    hsa: "A health savings account (HSA) is a tax-advantaged medical savings account available to taxpayers in the United States who are enrolled in a high-deductible health plan (HDHP). The funds contributed to an account are not subject to federal income tax at the time of deposit.",
-    out_of_pocket_max:
-      "The most you have to pay for covered services in a plan year. After you spend this amount on deductibles, copayments, and coinsurance, your health plan pays 100% of the costs of covered benefits.",
-  },
 };
 
 export default mockData;

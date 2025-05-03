@@ -1,0 +1,9 @@
+export const VERIFY_USER = "verify_user";
+export const CHECK_PENDING_BILL = "check_pending_bill";
+export const START_PAYMENT = "start_payment";
+export const CAPTURE_PAYMENT_CARD_NUMBER = "capture_payment_card_number";
+export const CAPTURE_SECURITY_CODE = "capture_security_code";
+export const CAPTURE_EXPIRATION_DATE = "capture_expiration_date";
+export const COMPLETE_PAYMENT_PROCESSING = "complete_payment_processing";
+export const CANCEL_PAYMENT_PROCESSING = "cancel_payment_processing";
+export const HUMAN_AGENT_HANDOFF = "human_agent_handoff";
