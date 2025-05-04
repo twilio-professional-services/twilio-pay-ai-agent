@@ -17,7 +17,7 @@ export const PAYMENT_CARD_NUMBER = "payment-card-number";
 export const EXPIRATION_DATE = "expiration-date";
 export const SECURITY_CODE = "security-code";
 export const INVALID_CARD_NUMBER = "invalid-card-number";
-export const INVALID_EXPIRATION_DATE = "invalid-expiration-date";
+export const INVALID_EXPIRATION_DATE = "invalid-date";
 export const INVALID_SECURITY_CODE = "invalid-security-code";
 export const INPUT_TIMEOUT = "input-timeout";
 

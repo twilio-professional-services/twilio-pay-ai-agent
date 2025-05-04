@@ -227,7 +227,9 @@ export class LLMService extends EventEmitter {
       }
     } catch (error) {
       console.error("LLM Stream Chat Completion Error:", error);
-      throw error;
+      this.emit("streamChatCompletion:error", error);
+      // Recover by emitting an error message and continuing
+      this.emit("streamChatCompletion:partial", "Could not process your request, can you please repeat?");
     }
   }
 

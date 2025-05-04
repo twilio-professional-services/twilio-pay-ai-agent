@@ -24,34 +24,34 @@ The payment flow involves the AI agent guiding the user through a secure and sea
 3. **Initiate Payment Session**  
   - The assistant initiates the secure payment system:  
     `"I'll now help you process a payment for two hundred dollars. I'm initiating our secure payment system..."`  
-    - [Initiate payment session by calling `startPaySession`]  
+    - [Initiate payment session by calling `start_payment`]  
     - Status callback confirms the session initiation.
 
 4. **Capture Card Number**  
   - The assistant requests the user's card number:  
     `"Please enter your card number."`  
     - [User enters card number]  
-    - [Initiate card number capture by calling `startPaySession`]  
+    - [Initiate card number capture by calling `capture_payment_card_number`]  
     - Status callback confirms the card number capture 
 
 5. **Capture Expiration Date**  
   - The assistant requests the card's expiration date:  
     `"Please enter your card's expiration date."`  
     - [User enters expiration date]  
-    - [Initiate expiration date capture by calling `captureExpirationDate`]  
+    - [Initiate expiration date capture by calling `capture_expiration_date`]  
     - Status callback confirms the expiration date capture.
 
 6. **Capture Security Code**  
   - The assistant requests the card's security code:  
     `"Please enter your card's security code."`  
     - [User enters security code]  
-    - [Initiate security code capture by calling `captureSecurityCode`]  
+    - [Initiate security code capture by calling `capture_security_code`]  
     - Status callback confirms the security code capture.
 
 7. **Process Payment**  
   - The assistant processes the payment:  
     `"Thank you for providing your payment details. I'm processing your payment now..."`  
-    - [Initiate payment processing by calling `completePaymentSession`]  
+    - [Initiate payment processing by calling `complete_payment_processing`]  
     - Status callback confirms the payment processing.
 
 8. **Payment Confirmation**  
@@ -77,7 +77,7 @@ The payment flow involves the AI agent guiding the user through a secure and sea
 - Node.js (v18+)
 - npm
 - Stripe Account (https://docs.stripe.com/get-started/account)
-- Twilio Stripe Pay connector ()
+- Twilio Stripe Pay connector (https://www.twilio.com/docs/voice/twiml/pay/pay-connectors#install-and-configure-a-pay-connector)
 
 
 ## Setup
@@ -113,18 +113,21 @@ Note that the `ngrok` command above forwards to a development server running on 
    cp .env.sample .env
    ```
 
-Once created, open `.env` in your code editor. You are required to set the following environment variables for the app to function properly:
-| Variable Name | Description | Example Value |
-|-------------------|--------------------------------------------------|------------------------|
-| `NGROK_DOMAIN` | The forwarding URL of your ngrok tunnel initiated above | `[your-ngrok-domain].ngrok.app` |
-| `TWILIO_ACCOUNT_SID` | Your Twilio Account SID, which can be found in the Twilio Console. | `ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX` |
-| `TWILIO_AUTH_TOKEN` | Your Twilio Auth Token, which is also found in the Twilio Console. | `your_auth_token_here` |
-| `TWILIO_WORKFLOW_SID` | The Taskrouter Workflow SID, which is automatically provisioned with your Flex account. Used to enqueue inbound call with Flex agents. To find this, in the Twilio Console go to TaskRouter > Workspaces > Flex Task Assignment > Workflows |`WWXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX`|
-| `WELCOME_GREETING` | The message automatically played to the caller |
-| `OPENAI_API_KEY` | Your OpenAI API Key | `your_api_key_here` |
+### Environment Variables
 
-Below is an optional environment variable that has default value that can be overridden:
-| `PORT` | The port your local server runs on. | `3000` |
+Below is the list of required environment variables for the application. Configure these variables in your `.env` file before running the application:
+
+| Variable Name           | Description                                                                                     | Example Value                          |
+|-------------------------|-------------------------------------------------------------------------------------------------|----------------------------------------|
+| `TWILIO_ACCOUNT_SID`    | Your Twilio Account SID, which can be found in the Twilio Console.                              | `ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX`   |
+| `TWILIO_API_KEY`        | Your Twilio API Key, which can be generated in the Twilio Console.                              | `SKXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX`   |
+| `TWILIO_API_SECRET`     | Your Twilio API Secret, which is paired with the API Key.                                       | `your_api_secret_here`                 |
+| `TWILIO_PAY_CONNECTOR`  | The unique name of your Twilio Pay Connector (e.g., Stripe Connector).                          | `stripe_connector`                     |
+| `TWILIO_WORKFLOW_SID`   | The TaskRouter Workflow SID for human assistance.                                               | `WWXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX`   |
+| `NGROK_DOMAIN`          | The forwarding URL of your ngrok tunnel initiated above.                                        | `[your-ngrok-domain].ngrok.app`        |
+| `TRANSFER_PHONE_NUMBER` | The phone number to transfer the call for human assistance.                                     | `+15555555555`                         |
+| `WELCOME_GREETING`      | The message automatically played to the caller.                                                 | `Thanks for calling .... How can I help you today?` |
+| `OPENAI_API_KEY`        | Your OpenAI API Key for accessing the OpenAI language model.                                    | `sk-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX`  |
 
 5. In the Twilio Console, go to Phone Numbers > Manage > Active Numbers and select an existing phone number (or Buy a number). In your Phone Number configuration settings, update the first A call comes in dropdown to Webhook and set the URL to https://[your-ngrok-domain].ngrok.app/api/incoming-call, ensure HTTP is set to HTTP POST, and click Save configuration.
 
@@ -171,13 +174,8 @@ With the development server running, you can now begin testing the Voice AI Assi
 
 ### Tools
 
-To update the `### Tools` section in the README file based on the tools in the `tools` folder, here is the revised content:
-
-### Tools
-
 - `verifyUserIdentity`: Verifies user identity (see src/services/llm/tools/verifyUserIdentity.ts)
 - `checkPendingBill`: Checks for pending medical bills (see src/services/llm/tools/checkPendingBill.ts)
-- `checkHsaAccount`: Checks if the user has an HSA account (see src/services/llm/tools/checkHsaAccount.ts)
 - `checkPaymentOptions`: Provides payment options available to the user (see src/services/llm/tools/checkPaymentOptions.ts)
 - `startPaySession`: Starts a payment session (see src/services/llm/tools/startPaySession.ts)
 - `capturePaymentCardNumber`: Captures the payment card number from the user (see src/services/llm/tools/capturePaymentCardNumber.ts)
