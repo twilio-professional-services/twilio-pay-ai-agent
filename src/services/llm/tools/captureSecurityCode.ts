@@ -1,12 +1,7 @@
 import { config } from "../../../config";
-import { Twilio } from "twilio";
 import { getSession } from "../../sessionState";
-import { CAPTURE_EXPIRATION_DATE } from "./toolConstants";
-
-const twilioClient = new Twilio(
-  config.twilio.accountSid,
-  config.twilio.authToken
-);
+import { CAPTURE_EXPIRATION_DATE } from "./toolHelpers";
+import {twilioClient} from "./toolHelpers";
 
 export interface captureSecurityCodeParams {
   callSid: string;

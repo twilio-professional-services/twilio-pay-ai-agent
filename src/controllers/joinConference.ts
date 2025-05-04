@@ -12,8 +12,3 @@ export async function handleJoinConferenceAction(conferenceId: string) {
 
   return voiceResponse.toString();
 }
-
-
-// place the initial caller in conference
-// oubound call to the transfer number
-// answered the call, place them in the same conference

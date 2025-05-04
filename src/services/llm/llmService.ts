@@ -10,11 +10,9 @@ import { EventEmitter } from "events";
 import {
   verifyUser,
   checkPendingBill,
-  searchCommonMedicalTerms,
   humanAgentHandoff,
   toolDefinitions,
   LLMToolDefinition,
-  checkHsaAccount,
   checkPaymentOptions,
   switchLanguage,
   startPaySession,
@@ -254,9 +252,7 @@ export class LLMService extends EventEmitter {
       const toolFunction = {
         verify_user: verifyUser,
         check_pending_bill: checkPendingBill,
-        search_common_medical_terms: searchCommonMedicalTerms,
         human_agent_handoff: humanAgentHandoff,
-        check_hsa_account: checkHsaAccount,
         check_payment_options: checkPaymentOptions,
         switch_language: switchLanguage,
         start_payment: startPaySession,

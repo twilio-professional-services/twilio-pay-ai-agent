@@ -1,4 +1,4 @@
-import { string } from "zod";
+
 import { getSession, updateSessionData } from "../services/sessionState";
 
 import {
@@ -6,12 +6,14 @@ import {
   CAPTURE_SECURITY_CODE,
   CAPTURE_EXPIRATION_DATE,
   COMPLETE_PAYMENT_PROCESSING,
-} from "../services/llm/tools/toolConstants";
+  INPUT_TIMEOUT,
+  PAYMENT_CARD_NUMBER,
+  EXPIRATION_DATE,
+  SECURITY_CODE
+} from "../services/llm/tools/toolHelpers";
 
 export async function handleStatusCallback(actionPayload: any) {
   try {
-
-
     console.log("Status Callback Payload", actionPayload);
 
     if (actionPayload.ErrorType) {
@@ -19,17 +21,13 @@ export async function handleStatusCallback(actionPayload: any) {
       const value = getSession(actionPayload.CallSid);
       if (value) {
         if (
-          actionPayload.ErrorType === "input-timeout" &&
-          actionPayload.Capture === "payment-card-number"
+          actionPayload.ErrorType === INPUT_TIMEOUT &&
+          actionPayload.Capture === PAYMENT_CARD_NUMBER
         ) {
           value.llmService.asyncToolCallResult(
             `Error occurred while capturing payment card number. Let the user know there was an issue and ask have them to try again after calling ${CAPTURE_PAYMENT_CARD_NUMBER} tool .`
           );
         }
-        // value.llmService.asyncToolCallResult(
-        // "Error occurred while capturing payment card number. Please try again."
-        // );
-        // Emit an event or perform any other action with the session value
       } else {
         console.log("No session found for CallSid:", actionPayload.CallSid);
       }
@@ -38,9 +36,9 @@ export async function handleStatusCallback(actionPayload: any) {
 
     if (
       actionPayload.PaymentCardType &&
-      actionPayload.Capture === "payment-card-number" &&
+      actionPayload.Capture === PAYMENT_CARD_NUMBER &&
       actionPayload.Required &&
-      !actionPayload.Required.includes("payment-card-number")
+      !actionPayload.Required.includes(PAYMENT_CARD_NUMBER)
     ) {
       console.log("Payment Card captured successfully", actionPayload);
       const value = getSession(actionPayload.CallSid);
@@ -56,33 +54,31 @@ export async function handleStatusCallback(actionPayload: any) {
         value.llmService.asyncToolCallResult(
           `credit card number captured successfully. Next step is to capture the expiration date by calling ${CAPTURE_EXPIRATION_DATE} .`
         );
-
-        // Emit an event or perform any other action with the session value
       } else {
         console.log("No session found for CallSid:", actionPayload.CallSid);
       }
 
       return;
     } else if (
-      actionPayload.Capture === "security-code" &&
+      actionPayload.Capture === SECURITY_CODE &&
       actionPayload.Required &&
-      !actionPayload.Required.includes("security-code")
+      !actionPayload.Required.includes(SECURITY_CODE)
     ) {
       console.log("Security code captured successfully", actionPayload);
       const value = getSession(actionPayload.CallSid);
       if (value) {
         value.llmService.asyncToolCallResult(
-          `security code captured successfully. Next step is to send all card information by calling ${COMPLETE_PAYMENT_PROCESSING}. Do not respond to user.`);
-        // Emit an event or perform any other action with the session value
+          `security code captured successfully. Next step is to send all card information by calling ${COMPLETE_PAYMENT_PROCESSING}. Do not respond to user.`
+        );
       } else {
         console.log("No session found for CallSid:", actionPayload.CallSid);
       }
 
       return;
     } else if (
-      actionPayload.Capture === "expiration-date" &&
+      actionPayload.Capture === EXPIRATION_DATE &&
       actionPayload.Required &&
-      !actionPayload.Required.includes("expiration-date")
+      !actionPayload.Required.includes(EXPIRATION_DATE)
     ) {
       console.log("Expiration date captured successfully", actionPayload);
       const value = getSession(actionPayload.CallSid);
@@ -90,7 +86,6 @@ export async function handleStatusCallback(actionPayload: any) {
         value.llmService.asyncToolCallResult(
           `Expiration date captured successfully. Next step is to capture the security code by calling ${CAPTURE_SECURITY_CODE} tool.`
         );
-        // Emit an event or perform any other action with the session value
       } else {
         console.log("No session found for CallSid:", actionPayload.CallSid);
       }
@@ -106,7 +101,6 @@ export async function handleStatusCallback(actionPayload: any) {
       const value = getSession(actionPayload.CallSid);
       if (value) {
         value.llmService.asyncToolCallResult("payment sucessfull .");
-        // Emit an event or perform any other action with the session value
       } else {
         console.log("No session found for CallSid:", actionPayload.CallSid);
       }

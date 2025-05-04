@@ -10,8 +10,14 @@ dotenv.config();
 const configSchema = z.object({
   // Twilio Configuration
   TWILIO_ACCOUNT_SID: z.string().min(1, "Twilio Account SID is required"),
-  TWILIO_AUTH_TOKEN: z.string().min(1, "Twilio Auth Token is required"),
+  // TWILIO_AUTH_TOKEN: z.string().min(1, "Twilio Auth Token is required"),
+ 
+  TWILIO_API_KEY: z.string().min(1, "Twilio API Key is required"),
+  TWILIO_API_SECRET: z.string().min(1, "Twilio Secret is required"),
+  TWILIO_PAY_CONNECTOR: z.string().min(1, "Twilio Payment Connector is required"),
+
   TWILIO_WORKFLOW_SID: z.string().min(1, "Twilio Workflow SID is required"),
+
   CONFERENCE_CALL: z.string().optional(),
   TWILIO_PHONE_NUMBER: z.string().optional(),
 
@@ -39,7 +45,9 @@ const configSchema = z.object({
 // Validate and parse the environment variables
 let parsedConfig: {
   TWILIO_ACCOUNT_SID: string;
-  TWILIO_AUTH_TOKEN: string;
+  TWILIO_API_KEY: string;
+  TWILIO_API_SECRET: string;
+  TWILIO_PAY_CONNECTOR: string;
   TWILIO_WORKFLOW_SID: string;
   TRANSFER_PHONE_NUMBER: string;
   CONFERENCE_CALL?: string | undefined;
@@ -66,7 +74,9 @@ try {
 export const config = {
   twilio: {
     accountSid: parsedConfig.TWILIO_ACCOUNT_SID,
-    authToken: parsedConfig.TWILIO_AUTH_TOKEN,
+    apiKey: parsedConfig.TWILIO_API_KEY,
+    apiSecret: parsedConfig.TWILIO_API_SECRET,
+    payConnector: parsedConfig.TWILIO_PAY_CONNECTOR,
     workflowSid: parsedConfig.TWILIO_WORKFLOW_SID,
     welcomeGreeting: parsedConfig.WELCOME_GREETING,
     transferPhoneNumber: parsedConfig.TRANSFER_PHONE_NUMBER,
@@ -93,7 +103,7 @@ export const config = {
 export function maskSensitiveConfig(config: typeof parsedConfig) {
   return {
     ...config,
-    TWILIO_AUTH_TOKEN: config.TWILIO_AUTH_TOKEN.slice(0, 3) + "****",
+    TWILIO_API_SECRET: config.TWILIO_API_SECRET.slice(0, 3) + "****",
     OPENAI_API_KEY: config.OPENAI_API_KEY
       ? config.OPENAI_API_KEY.slice(0, 5) + "****"
       : undefined,

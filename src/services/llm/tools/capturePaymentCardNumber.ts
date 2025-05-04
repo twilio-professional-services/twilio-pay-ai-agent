@@ -1,7 +1,5 @@
 import { config } from "../../../config";
-import { Twilio } from "twilio";
-
-const twilioClient = new Twilio(config.twilio.accountSid, config.twilio.authToken);
+import {twilioClient} from "./toolHelpers";
 
 export interface capturePaymentCardNumberParams {
   callSid: string;
