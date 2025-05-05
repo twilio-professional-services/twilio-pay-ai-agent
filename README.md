@@ -222,6 +222,12 @@ The session state is managed in-memory and resets upon completion or cancellatio
 
 - Mock data (see [src/data/mock-data.ts](src/data/mock-data.ts))
 
+
+### ⚠️ Security Notice
+This application is intended for educational and demonstration purposes only. While it leverages Twilio Pay to securely capture payment information, the codebase is not PCI-DSS compliant by default. Do not use this as-is in a production environment without first performing a thorough security review and implementing appropriate safeguards.
+
+Additionally, note that payment data remains secure only if the caller enters their card details using the phone keypad (DTMF). If the caller speaks their card information aloud, it may compromise the security of the transaction.
+
 ### License
 
 This project is licensed under the MIT License.
