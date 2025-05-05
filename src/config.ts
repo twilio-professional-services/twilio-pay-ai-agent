@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import { z } from "zod";
 
 import { languageOptions } from "./languageOptions";
+import logger from "./utils/logger";
 
 // Load environment variables
 dotenv.config();
@@ -10,8 +11,6 @@ dotenv.config();
 const configSchema = z.object({
   // Twilio Configuration
   TWILIO_ACCOUNT_SID: z.string().min(1, "Twilio Account SID is required"),
-  // TWILIO_AUTH_TOKEN: z.string().min(1, "Twilio Auth Token is required"),
- 
   TWILIO_API_KEY: z.string().min(1, "Twilio API Key is required"),
   TWILIO_API_SECRET: z.string().min(1, "Twilio Secret is required"),
   TWILIO_PAY_CONNECTOR: z.string().min(1, "Twilio Payment Connector is required"),
@@ -64,7 +63,7 @@ try {
   parsedConfig = configSchema.parse(process.env);
 } catch (error) {
   if (error instanceof z.ZodError) {
-    console.error("Configuration Error:", error.errors);
+    logger.error("Configuration Error:", error.errors);
     throw new Error("Invalid configuration. Please check your .env file.");
   }
   throw error;
@@ -112,5 +111,8 @@ export function maskSensitiveConfig(config: typeof parsedConfig) {
 
 // Optional: Log masked configuration for debugging
 if (process.env.NODE_ENV !== "production") {
-  console.log("Loaded Configuration:", maskSensitiveConfig(parsedConfig));
+  logger.info(
+    "Loaded Configuration:",
+    maskSensitiveConfig(parsedConfig)
+  );  
 }

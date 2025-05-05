@@ -1,4 +1,5 @@
 import { config } from "../../../config";
+import logger from "../../../utils/logger";
 
 export interface switchLanguageParams {
   targetLanguage: string;
@@ -6,7 +7,7 @@ export interface switchLanguageParams {
 
 export async function switchLanguage(params: switchLanguageParams): Promise<string> {
 
-  console.log('Switch Language', params);
+  logger.info("Switch Language params", { params });
 
   if (params.targetLanguage in config.languages) {
     return `Language switched to ${params.targetLanguage}`;

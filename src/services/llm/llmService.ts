@@ -1,10 +1,5 @@
 import OpenAI from "openai";
 import { ChatCompletionCreateParams } from "openai/resources/chat/completions";
-// import { Stream } from "openai/streaming";
-// import {
-//   ChatCompletionChunk,
-//   ChatCompletionMessage,
-// } from "openai/resources/chat/completions";
 import { systemPrompt } from "../../prompts/systemPrompt";
 import { EventEmitter } from "events";
 import {
@@ -13,7 +8,6 @@ import {
   humanAgentHandoff,
   toolDefinitions,
   LLMToolDefinition,
-  checkPaymentOptions,
   switchLanguage,
   startPaySession,
   capturePaymentCardNumber,
@@ -21,6 +15,7 @@ import {
   captureExpirationDate,
   completePaymentSession,
 } from "./tools";
+import logger from "../../utils/logger";
 
 export class LLMService extends EventEmitter {
   private openai: OpenAI;
@@ -80,7 +75,7 @@ export class LLMService extends EventEmitter {
                 content: result,
               };
             } catch (error) {
-              console.error(
+              logger.error(
                 `Tool call ${toolCall.function.name} failed:`,
                 error
               );
@@ -112,11 +107,15 @@ export class LLMService extends EventEmitter {
 
       // Add the assistant's message to conversation history
       this.messages.push(message);
-      console.log("message", message);
+      logger.info("LLM response", {
+        message: message,
+      });
       this.emit("chatCompletion:complete", message);
     } catch (error) {
       this.emit("chatCompletion:error", error);
-      console.error("LLM Chat Completion Error:", error);
+      logger.error("LLM Chat Completion Error", {
+        error,
+      });
       throw error;
     }
   }
@@ -128,8 +127,6 @@ export class LLMService extends EventEmitter {
   ) {
     try {
       this.messages.push(...messages);
-
-      // console.log("streamChatCompletion", this.messages);
 
       const stream = await this.openai.chat.completions.create({
         stream: true,
@@ -152,7 +149,7 @@ export class LLMService extends EventEmitter {
 
         llmResponse = llmResponse + content;
 
-        console.log("chunk", content, finishReason, deltas);
+        logger.info("chunk", { content, finishReason, deltas });
 
         if (finishReason === "stop") {
           this.messages.push({ role: "assistant", content: llmResponse });
@@ -196,7 +193,7 @@ export class LLMService extends EventEmitter {
                   content: result,
                 };
               } catch (error) {
-                console.error(
+                logger.error(
                   `Tool call ${toolCall.function.name} failed:`,
                   error
                 );
@@ -226,10 +223,15 @@ export class LLMService extends EventEmitter {
         }
       }
     } catch (error) {
-      console.error("LLM Stream Chat Completion Error:", error);
+      logger.error("LLM Stream Chat Completion Error", {
+        error,
+      });
       this.emit("streamChatCompletion:error", error);
       // Recover by emitting an error message and continuing
-      this.emit("streamChatCompletion:partial", "Could not process your request, can you please repeat?");
+      this.emit(
+        "streamChatCompletion:partial",
+        "Could not process your request, can you please repeat?"
+      );
     }
   }
 
@@ -255,7 +257,6 @@ export class LLMService extends EventEmitter {
         verify_user: verifyUser,
         check_pending_bill: checkPendingBill,
         human_agent_handoff: humanAgentHandoff,
-        check_payment_options: checkPaymentOptions,
         switch_language: switchLanguage,
         start_payment: startPaySession,
         capture_payment_card_number: capturePaymentCardNumber,
@@ -279,15 +280,19 @@ export class LLMService extends EventEmitter {
       return result;
     } catch (error) {
       this.emit("toolCall:error", error);
-      console.error("Tool Call Error:", error);
+      logger.error("Tool Call Error", {
+        error,
+      });
       throw error;
     }
   }
 
   async asyncToolCallResult(message: any) {
     // Handle async tool call result
-    console.log("Async tool call result", message);
-    // this.emit("asyncToolCallResult", message);
+
+    logger.info("Async tool call result", {
+      message,
+    });
 
     this.streamChatCompletion([
       {

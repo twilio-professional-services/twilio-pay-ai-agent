@@ -1,7 +1,8 @@
 import { config } from "../../../config";
 import { getSession } from "../../sessionState";
 import { CAPTURE_PAYMENT_CARD_NUMBER } from "./toolHelpers";
-import {twilioClient} from "./toolHelpers";
+import { twilioClient } from "./toolHelpers";
+import logger from "../../../utils/logger";
 
 export interface captureExpirationDateParams {
   callSid: string;
@@ -11,24 +12,13 @@ export interface captureExpirationDateParams {
 export async function captureExpirationDate(
   params: captureExpirationDateParams
 ): Promise<string | null> {
-  // const sessionData = {
-  //   idempotencyKey: params.callSid + Date.now().toString(),
-  //   statusCallback: "",
-  //   // tokenType: this.tokenType,
-  //   currency: "USD",
-  //   chargeAmount: 1,
-  //   paymentConnector: "stripe_connector",
-  //   securityCode: true,
-  //   postalCode: false
-  // }
-
   try {
-    console.log("Capture expiration date", params);
+    logger.info("Capture expiration date params", { params });
 
     const sessionData = await getSession(params.callSid);
 
     if (!sessionData) {
-      console.error("Session data not found for callSid:", params.callSid);
+      logger.error("Session data not found for callSid:", params.callSid);
       return null;
     }
 
@@ -45,13 +35,9 @@ export async function captureExpirationDate(
         statusCallback: `https://${config.ngrok.domain}/api/status-callback`, // Replace with your actual status callback URL
       });
 
-    // Store the new data in the callbackData map, using the Sid as the key
-    // this.statusCallbackMap.set(paymentSid, paymentSession);
-
     return "Ask the caller to enter the expiration date using the key pad."; // Pay Object
   } catch (error) {
-    //const message = `Error with captureCard for callSID: ${callSid} - ${error} `;
-    // this.emit(LOG_EVENT, { level: 'error', message });
+    logger.error("Error capturing expiration date", { error });
     return null;
   }
 }

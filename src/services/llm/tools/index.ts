@@ -2,7 +2,6 @@ export * from './toolDefinitions';
 export * from './verifyUserIdentity';
 export * from './checkPendingBill';
 export * from './humanAgentHandoff';
-export * from './checkPaymentOptions';
 export * from './switchLanguage';
 export * from './startPaySession';
 export * from './capturePaymentCardNumber';

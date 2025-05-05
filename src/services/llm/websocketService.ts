@@ -1,20 +1,15 @@
 import { WebSocketServer, WebSocket } from "ws";
 import LLMService from "./llmService";
 import { ConversationRelayMessage } from "../../types";
-import {config} from "../../config";
+import { config } from "../../config";
 import { DTMFHelper } from "./dtmfHelper";
+import logger from "../../utils/logger";
 
-import {
-  addSession,
-  getSession,
-  updateSessionData,
-  removeSession,
-} from "./../sessionState";
-
+import { addSession } from "./../sessionState";
 
 export function initializeWebSocketHandlers(wss: WebSocketServer) {
   wss.on("connection", (ws: WebSocket) => {
-    console.log("New WebSocket connection");
+    logger.info("New WebSocket connection");
 
     const llmService = new LLMService();
     const dtmfHelper = new DTMFHelper();
@@ -22,7 +17,7 @@ export function initializeWebSocketHandlers(wss: WebSocketServer) {
     ws.on("message", (message: string) => {
       try {
         const parsedMessage: ConversationRelayMessage = JSON.parse(message);
-        console.log("Parsed message:", parsedMessage);
+        logger.info("Received message", { parsedMessage });
         switch (parsedMessage.type) {
           case "prompt":
             llmService.streamChatCompletion([
@@ -36,23 +31,23 @@ export function initializeWebSocketHandlers(wss: WebSocketServer) {
             break;
           case "error":
             // Handle error case if needed
-            console.warn("Error message:", parsedMessage);
+            logger.warn("Error message", parsedMessage);
+
             break;
           case "interrupt":
             llmService.userInterrupted = true;
             break;
           case "dtmf":
-              console.log("DTMF Message", parsedMessage);
-              const processedDTMF = dtmfHelper.processDTMF(parsedMessage.digit);
-              llmService.streamChatCompletion([
-                { role: "system", content: processedDTMF },
-              ]);
-              break;
+            const processedDTMF = dtmfHelper.processDTMF(parsedMessage.digit);
+            llmService.streamChatCompletion([
+              { role: "system", content: processedDTMF },
+            ]);
+            break;
           default:
-            console.warn(`Unknown message type: ${parsedMessage.type}`);
+            logger.warn(`Unknown message type: ${parsedMessage.type}`);
         }
       } catch (error) {
-        console.error(`Error parsing message: ${message}`, error);
+        logger.error(`Error parsing message: ${message}`, error);
         ws.send(
           JSON.stringify({
             type: "error",
@@ -63,7 +58,7 @@ export function initializeWebSocketHandlers(wss: WebSocketServer) {
     });
 
     ws.on("close", () => {
-      console.log("WebSocket connection closed");
+      logger.info("WebSocket connection closed");
     });
 
     llmService.on("chatCompletion:complete", (message: any) => {
@@ -94,14 +89,13 @@ export function initializeWebSocketHandlers(wss: WebSocketServer) {
     });
 
     llmService.on("humanAgentHandoff", (message: any) => {
-
       const textMessage = {
         type: "text",
         token: message.response,
         last: true,
       };
 
-      console.log("Handoff Message", textMessage);
+      logger.info("Handoff Message", textMessage);
       ws.send(JSON.stringify(textMessage));
 
       const endMessage = {
@@ -113,23 +107,21 @@ export function initializeWebSocketHandlers(wss: WebSocketServer) {
     });
 
     llmService.on("switchLanguage", (message: any) => {
-
-      const languageCode = config.languages[message.targetLanguage]?.locale_code;
+      const languageCode =
+        config.languages[message.targetLanguage]?.locale_code;
       if (!languageCode) {
-        console.info("Language not supported");
+        logger.info("Language not supported", message.targetLanguage);
         return;
       }
 
-      const languageMessage = { 
+      const languageMessage = {
         type: "language",
         ttsLanguage: languageCode,
-        transcriptionLanguage: languageCode
-      }
+        transcriptionLanguage: languageCode,
+      };
 
-      console.log("Switch Language", languageMessage);
-      ws.send(JSON.stringify(languageMessage))
+      logger.info("Switch Language", message.targetLanguage);
+      ws.send(JSON.stringify(languageMessage));
     });
-
   });
 }
-

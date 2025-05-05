@@ -1,7 +1,8 @@
 import { config } from "../../../config";
 import { getSession } from "../../sessionState";
 import { CAPTURE_EXPIRATION_DATE } from "./toolHelpers";
-import {twilioClient} from "./toolHelpers";
+import { twilioClient } from "./toolHelpers";
+import logger from "../../../utils/logger";
 
 export interface captureSecurityCodeParams {
   callSid: string;
@@ -11,15 +12,15 @@ export interface captureSecurityCodeParams {
 export async function captureSecurityCode(
   params: captureSecurityCodeParams
 ): Promise<string | null> {
-  console.log("Capture security code", params);
+  logger.info("Capture security code params", { params });
 
   try {
-    console.log("Capture expiration date", params);
+    logger.info("Capture security code params", { params });
 
     const sessionData = await getSession(params.callSid);
 
     if (!sessionData) {
-      console.error("Session data not found for callSid:", params.callSid);
+      logger.error("Session data not found for callSid:", params.callSid);
       return null;
     }
 
@@ -38,6 +39,7 @@ export async function captureSecurityCode(
 
     return "Ask the caller to enter the security code using the key pad."; // Pay Object
   } catch (error) {
+    logger.error("Error capturing security code", { error });
     return null;
   }
 }

@@ -1,24 +1,25 @@
 import twilio from "twilio";
 import { config } from "../config";
+import logger from "../utils/logger";
 
 export async function handleConnectAction(actionPayload: any) {
   try {
-    console.log("Connect Action Payload", actionPayload);
+    logger.info("Connect Action Payload", { actionPayload });
 
     if (actionPayload.CallStatus === "completed") {
-      console.log("Call completed");
+      logger.info("Call completed");
       return;
     }
 
     if (!config.twilio.transferPhoneNumber) {
-      console.log("Transfer phone number not set");
+      logger.error("Transfer phone number not set");
       return;
     }
 
     const voiceResponse = new twilio.twiml.VoiceResponse();
 
     if (!actionPayload.HandoffData) {
-      console.log("No HandoffData - Call can be be ended");
+      logger.info("No HandoffData - Call can be be ended");
       return voiceResponse.hangup().toString();
     }
 

@@ -1,6 +1,6 @@
 import { config } from "../../../config";
-
 import {twilioClient} from "./toolHelpers";
+import logger from "../../../utils/logger";
 
 export interface cancelPaymentProcessingParams {
   callSid: string;
@@ -10,9 +10,14 @@ export interface cancelPaymentProcessingParams {
 export async function cancelPaymentSession(
   params: cancelPaymentProcessingParams
 ): Promise<string | null> {
-  console.log("cancel payment processing", params);
+
+  logger.info("cancel payment processing", { params });
 
   try {
+    if (!config.ngrok.domain) {
+      throw new Error("Ngrok domain is not configured. Please check the configuration.");
+    }
+
     const paymentSession = await twilioClient
       .calls(params.callSid)
       .payments(params.paymentSid)
@@ -24,6 +29,8 @@ export async function cancelPaymentSession(
 
     return "Initiating cancellation of payment session. Do not respond to the user. Wait until you get the cancelling message back."; 
   } catch (error) {
+    // Log the error for debugging purposes
+    logger.error("Error while cancelling payment session", { error });
     return null;
   }
 }
