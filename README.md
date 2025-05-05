@@ -156,6 +156,12 @@ When prompted for your first name, last name, and date of birth, use one of the 
 }
 ```
 
+When prompted for your credit card number, use the following test card details:
+
+- **Card Number**: American Express test card number `378282246310005`
+- **Expiration Date**: Any future date in the format `MMYY` (e.g., `1229` for December 2029)
+- **Security Code**: A 4-digit code (e.g., `1234`)
+
 ## Scripts
 
 - `npm run dev`: Start the development server
