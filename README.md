@@ -1,5 +1,8 @@
 # Voice AI Agent - powered by Twilio ConversationRelay + Twilio Pay
 
+## Disclaimer
+This software is to be considered "sample code", a Type B Deliverable, and is delivered "as-is" to the user. Twilio bears no responsibility to support the use or implementation of this software.
+
 ## Overview
 
 The **Voice AI Agent** includes a robust **AI-assisted pay** feature that enables seamless payment processing. The AI Assistant guides users through the payment process step-by-step, ensuring a user friendly experience.
@@ -72,12 +75,11 @@ The payment flow involves the AI agent guiding the user through a secure and sea
 
 - Jest for unit testing: The project includes a comprehensive suite of unit tests written with Jest, ensuring code reliability and robustness during development and deployment.
 
-## Prerequisites
+## Prerequisites for Pay Processing
 
-- Node.js (v18+)
-- npm
-- Stripe Account (https://docs.stripe.com/get-started/account)
-- Twilio Stripe Pay connector (https://www.twilio.com/docs/voice/twiml/pay/pay-connectors#install-and-configure-a-pay-connector)
+- Create a [Stripe Account](https://docs.stripe.com/get-started/account)
+
+- Create and configure Twilio [Stripe Pay connector](https://www.twilio.com/docs/voice/twiml/pay/pay-connectors#install-and-configure-a-pay-connector): The Twilio Stripe Pay connector enables secure payment processing by integrating Twilio's Pay API with Stripe, allowing the application to handle credit card transactions.
 
 
 ## Setup
@@ -141,7 +143,18 @@ npm run dev
 
 ### Testing the app
 
-With the development server running, you can now begin testing the Voice AI Assistant. Place a call to the configured phone number and start interacting with your AI Assistant
+With the development server running, you can now begin testing the Voice AI Assistant. Place a call to the configured phone number and start interacting with your AI Assistant.
+
+When prompted for your first name, last name, and date of birth, use one of the users from the mock data (e.g., John Doe with DOB, May 1st 1990).
+
+```typescript
+// Example user from mock data
+{
+  firstName: "John",
+  lastName: "Doe",
+  dob: "1990-05-01",
+}
+```
 
 ## Scripts
 
@@ -153,6 +166,7 @@ With the development server running, you can now begin testing the Voice AI Assi
 ## API Endpoints
 
 - `POST /api/incoming-call`: Process incoming call - Initiates ConversationRelay (see [src/routes/callRoutes.ts](src/routes/callRoutes.ts))
+- `POST /api/status-callback`: Handles status callbacks from Twilio during the payment process. This endpoint processes updates such as payment session initiation, card number capture, expiration date capture, security code capture, and payment completion. (see [src/routes/statusCallbackRoutes.ts](src/routes/statusCallbackRoutes.ts))
 - `POST /api/action`: Handle connect action - Human agent handoff (see [src/routes/connectActionRoutes.ts](src/routes/connectActionRoutes.ts))
 
 ## WebSocket
@@ -162,11 +176,6 @@ With the development server running, you can now begin testing the Voice AI Assi
 ## Configuration
 
 - Environment variables are loaded from the `.env` file (see [src/config.ts](src/config.ts))
-
-## Controllers
-
-- `handleIncomingCall`: Processes incoming call (see [src/controllers/callController.ts](src/controllers/callController.ts))
-- `handleConnectAction`: Handles connect action (see [src/controllers/connectActionController.ts](src/controllers/connectActionController.ts))
 
 ## LLM Services
 
@@ -185,6 +194,17 @@ With the development server running, you can now begin testing the Voice AI Assi
 - `cancelPaymentSession`: Cancels the payment session (see src/services/llm/tools/cancelPaymentSession.ts)
 - `humanAgentHandoff`: Transfers the call to a human agent (see src/services/llm/tools/humanAgentHandoff.ts)
 - `switchLanguage`: Switches the language for the session (see src/services/llm/tools/switchLanguage.ts) 
+
+### Session State
+
+The application maintains session state during the payment process. Key aspects tracked include:
+
+- **Credit Card Details**: Card number, expiration date, and security code.
+- **Capture Progress**: Flags indicating completion of card details capture and payment processing.
+- **Payment Status**: Tracks the status, errors, and confirmation details of the payment.
+- **Session Metadata**: Includes call identifiers, payment connector, charge amount, and currency.
+
+The session state is managed in-memory and resets upon completion or cancellation of the payment process. For scalability, persistent storage can be implemented.
 
 
 ### ConversationRelay Architectural Diagram
