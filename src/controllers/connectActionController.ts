@@ -11,41 +11,30 @@ export async function handleConnectAction(actionPayload: any) {
       return;
     }
 
-    if (!config.twilio.transferPhoneNumber) {
-      logger.error("Transfer phone number not set");
-      return;
-    }
-
     const voiceResponse = new twilio.twiml.VoiceResponse();
 
     if (!actionPayload.HandoffData) {
-      logger.info("No HandoffData - Call can be be ended");
+      console.log("No HandoffData - Call can be be ended");
       return voiceResponse.hangup().toString();
     }
 
-    if (config.twilio.conferenceCall === 'true' && config.twilio.twilioPhoneNumber) {
-      const client = twilio(config.twilio.accountSid, config.twilio.authToken);
+    const workflowSid = config.twilio.workflowSid;
+    const transferPhoneNumber = config.twilio.transferPhoneNumber;
 
-      await client.calls.create({
-        from: config.twilio.twilioPhoneNumber,
-        to: config.twilio.transferPhoneNumber,
-        url: `https://${config.ngrok.domain}/api/conference/${actionPayload.CallSid}`,
-      });
+    if (!workflowSid && !transferPhoneNumber) {
+      logger.error("Workflow SID or transfer phone number is not set");
+    }
 
-      voiceResponse.dial().conference(
-        {
-          startConferenceOnEnter: false,
-          endConferenceOnExit: true,
-        },
-        actionPayload.CallSid
-      );
-
-      return voiceResponse.toString();
-    } else {
+    if (workflowSid) {
+      return voiceResponse
+        .enqueue({ workflowSid: workflowSid })
+        .task(JSON.stringify({"handOffData" : actionPayload.HandoffData}))
+        .toString();
+    } else if (transferPhoneNumber) {
       voiceResponse.dial().number(config.twilio.transferPhoneNumber);
       return voiceResponse.toString();
     }
   } catch (error) {
-    throw error;
+    logger.error("Error handling connect action", { error });
   }
 }

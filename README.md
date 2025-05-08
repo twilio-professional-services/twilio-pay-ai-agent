@@ -125,9 +125,9 @@ Below is the list of required environment variables for the application. Configu
 | `TWILIO_API_KEY`        | Your Twilio API Key, which can be generated in the Twilio Console.                              | `SKXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX`   |
 | `TWILIO_API_SECRET`     | Your Twilio API Secret, which is paired with the API Key.                                       | `your_api_secret_here`                 |
 | `TWILIO_PAY_CONNECTOR`  | The unique name of your Twilio Pay Connector (e.g., Stripe Connector).                          | `stripe_connector`                     |
-| `TWILIO_WORKFLOW_SID`   | The TaskRouter Workflow SID for human assistance.                                               | `WWXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX`   |
+| `TWILIO_WORKFLOW_SID`   | The TaskRouter Workflow SID for human assistance. This is required if you want the call to be transferred to Twilio Flex for agent support.   | `WWXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX`   |
 | `NGROK_DOMAIN`          | The forwarding URL of your ngrok tunnel initiated above.                                        | `[your-ngrok-domain].ngrok.app`        |
-| `TRANSFER_PHONE_NUMBER` | The phone number to transfer the call for human assistance.                                     | `+15555555555`                         |
+| `TRANSFER_PHONE_NUMBER` | Optional - The phone number to transfer the call for human assistance.                                      | `+15555555555`                         |
 | `WELCOME_GREETING`      | The message automatically played to the caller.                                                 | `Thanks for calling .... How can I help you today?` |
 | `OPENAI_API_KEY`        | Your OpenAI API Key for accessing the OpenAI language model.                                    | `sk-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX`  |
 
@@ -158,7 +158,7 @@ When prompted for your first name, last name, and date of birth, use one of the 
 
 When prompted for your credit card number, use the following test card details:
 
-- **Card Number**: American Express test card number `378282246310005`
+- **Card Number**: American Express test card number `3782 822463 10005`
 - **Expiration Date**: Any future date in the format `MMYY` (e.g., `1229` for December 2029)
 - **Security Code**: A 4-digit code (e.g., `1234`)
 

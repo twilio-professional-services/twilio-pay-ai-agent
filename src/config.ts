@@ -15,7 +15,7 @@ const configSchema = z.object({
   TWILIO_API_SECRET: z.string().min(1, "Twilio Secret is required"),
   TWILIO_PAY_CONNECTOR: z.string().min(1, "Twilio Payment Connector is required"),
 
-  TWILIO_WORKFLOW_SID: z.string().min(1, "Twilio Workflow SID is required"),
+  TWILIO_WORKFLOW_SID: z.string().optional(),
 
   CONFERENCE_CALL: z.string().optional(),
   TWILIO_PHONE_NUMBER: z.string().optional(),

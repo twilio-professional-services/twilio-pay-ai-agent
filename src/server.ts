@@ -6,7 +6,6 @@ import dotenv from "dotenv";
 
 import callRoutes from "./routes/callRoutes";
 import connectActionRoutes from "./routes/connectActionRoutes";
-import joinConferenceRoutes from "./routes/joinConference";
 import statusCallBackRoutes from "./routes/statusCallback";
 
 import { initializeWebSocketHandlers } from "./services/llm/websocketService";
@@ -25,7 +24,6 @@ app.use(express.json()); // for parsing application/json
 // Routes
 app.use("/api", callRoutes);
 app.use("/api", connectActionRoutes);
-app.use("/api", joinConferenceRoutes);
 app.use("/api", statusCallBackRoutes);
 
 // Create HTTP server
