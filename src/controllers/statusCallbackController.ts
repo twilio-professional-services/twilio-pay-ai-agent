@@ -48,9 +48,38 @@ export async function handleStatusCallback(actionPayload: any) {
       return;
     }
 
+    // Check if the payment process is successful
+    if (actionPayload.Result === "success" && actionPayload.PaymentConfirmationCode) {
+      handlePaymentSuccess(actionPayload);
+      return;
+    }
+
     logger.info("Status Callback no condition matched", actionPayload);
   } catch (error) {
     logger.error("An error occurred:", error);
+  }
+}
+
+function handlePaymentSuccess(actionPayload: any) {
+  logger.info("Payment processed successfully", actionPayload);
+  const session = getSession(actionPayload.CallSid);
+  if (session) {
+    const paymentData = {
+      paymentConfirmationCode: actionPayload.PaymentConfirmationCode,
+      paymentCardType: actionPayload.PaymentCardType,
+      paymentCardNumber: actionPayload.PaymentCardNumber,
+      expirationDate: actionPayload.ExpirationDate,
+      paymentMethod: actionPayload.PaymentMethod,
+      paymentResult: actionPayload.Result,
+    };
+
+    updateSessionData(actionPayload.CallSid, paymentData);
+
+    session.llmService.asyncToolCallResult(
+      `Payment processed successfully with confirmation code ${actionPayload.PaymentConfirmationCode}. Do not respond to user.`
+    );
+  } else {
+    logger.error("No session found for CallSid:", actionPayload.CallSid);
   }
 }
 
@@ -156,7 +185,7 @@ function handleSecurityCodeCaptured(actionPayload: any) {
     };
     updateSessionData(actionPayload.CallSid, cardSecurityCodeData);
     sessionData.llmService.asyncToolCallResult(
-      `Security code captured successfully. Next step is to send all card information by calling ${COMPLETE_PAYMENT_PROCESSING}. Do not respond to user.`
+      `Security code captured successfully. Do not respond to user.`
     );
   } else {
     logger.error("No session found for CallSid:", actionPayload.CallSid);
@@ -210,7 +239,7 @@ function handleAllDataCaptured(actionPayload: any) {
   );
   const session = getSession(actionPayload.CallSid);
   if (session) {
-    session.llmService.asyncToolCallResult("Payment successful.");
+    session.llmService.asyncToolCallResult(`Final step is complete the payment processing by calling ${COMPLETE_PAYMENT_PROCESSING}. Do not respond to user.`);
   } else {
     logger.error("No session found for CallSid:", actionPayload.CallSid);
   }
