@@ -73,8 +73,6 @@ The payment flow involves the AI agent guiding the user through a secure and sea
 
 - Uses OpenAI model and ChatCompletion API in `LLMService`: The application integrates OpenAI's language model through the ChatCompletion API to power the AI Assistant's conversational capabilities. It supports both streaming and non-streaming responses, providing flexibility for different use cases.
 
-- Jest for unit testing: The project includes a comprehensive suite of unit tests written with Jest, ensuring code reliability and robustness during development and deployment.
-
 ## Prerequisites for Pay Processing
 
 - Create a [Stripe Account](https://docs.stripe.com/get-started/account)
@@ -167,7 +165,6 @@ When prompted for your credit card number, use the following test card details:
 - `npm run dev`: Start the development server
 - `npm run build`: Compile TypeScript
 - `npm start`: Run the production build
-- `npm test`: Run unit tests
 
 ## API Endpoints
 
